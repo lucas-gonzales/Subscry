@@ -31,124 +31,116 @@
 |------------|-----|
 | **Expo** | Framework React Native (managed workflow) |
 | **TypeScript** | Tipagem estática e code quality |
-| **expo-sqlite** | Banco de dados local (persistência) |
-| **date-fns** | Cálculos de datas e recorrências |
-| **React Navigation** | Navegação entre telas |
-| **AsyncStorage** | Configurações leves |
-# 💰 SubscriptionManager (Subscry) — MVP
+## Subscry
 
-Resumo rápido
--------------
-SubscriptionManager (apelidado de _Subscry_ no repositório) é um MVP construído com Expo + TypeScript para gerenciar assinaturas recorrentes localmente. O foco foi entregar uma experiência que funcione no Expo (Android, iOS e Web) com UX simples: dashboard, lista de assinaturas, formulário de criação/edição, divisão por participantes e destaque de vencimentos.
+Subscry é o nome oficial deste projeto. Use sempre "Subscry" em documentação, apresentações e no app — não utilize outro título.
 
-Principais objetivos alcançados
--------------------------------
-- App funcional em Expo (web + mobile)
-- Persistência local (file-backed DB shim para compatibilidade web; compatível com SQLite no nativo)
-- Presets com ícones de marca via `iconMap` (evita `require()` dinâmico)
-- Picker de data (calendário modal) integrado ao formulário
-- Substituição do campo `currency` por `participants` (divisão por pessoa)
-- Dashboard com totais normalizados e agregação por participante
-- Destaque visual de vencimentos próximos e animações leves (`LayoutAnimation`)
+Visão geral
+-----------
 
-Como rodar (rápido)
--------------------
-Instale dependências e rode o bundler do Expo:
+Subscry é um aplicativo mobile (Expo + TypeScript) para gerenciar assinaturas recorrentes, dividir custos entre participantes e manter um histórico local das assinaturas. O foco é simplicidade, precisão financeira (centavos inteiros) e compatibilidade entre dispositivos (iOS/Android/Web).
 
-```powershell
+Funcionalidades principais
+-------------------------
+
+- Criar/editar/excluir assinaturas com título, valor (em centavos), frequência, data de início, participantes e notas.
+- Persistência de participantes em banco JSON (arquivo) para autocomplete e agregação de totais por pessoa.
+- Marcar um participante como `Você` (isMe) para destacar e afetar o cálculo de divisão.
+- Migração idempotente de participantes embutidos em assinaturas para a tabela de participantes persistidos.
+- Cálculo determinístico em centavos para divisão por pessoa (mantém soma exata do total).
+- Export/Import JSON para backup e restauração.
+
+Como rodar
+----------
+
+1. Instalar dependências:
+
+```bash
 npm install
-npx expo start -c
+npx expo install
 ```
 
-Abra com Expo Go (Android/iOS) ou no navegador usando a opção Web.
+2. Configurar variáveis de ambiente (se aplicável):
 
-Arquitetura e decisões principais
---------------------------------
-- UI: React Native com Expo (managed workflow). Navegação com React Navigation.
-- Tipagem: TypeScript em todo o projeto.
-- Persistência:
-  - Para compatibilidade web, o projeto usa um DB shim baseado em arquivo (`src/db/index.ts`) que persiste um JSON no disco (`expo-file-system`).
-  - Em runtime nativo o projeto preserva dependências SQLite (`expo-sqlite`) e a DAO (`src/db/subscriptionsDao.ts`) mantém uma API consistente sobre ambos os mecanismos.
-- Imagens: `src/data/iconMap.ts` contém `require()`s estáticos para evitar falhas no Metro bundler (web).
-- Localização/formatos: Intl (helper `src/utils/format.ts`) para formatação pt-BR.
-
-Principais arquivos e responsabilidades
---------------------------------------
-- `App.tsx` — ponto de entrada da aplicação.
-- `AppNavigator.tsx` — configuração de rotas e stacks.
-- `src/screens/Dashboard.tsx` — visão geral, totais e chips por participante.
-- `src/screens/SubscriptionsList.tsx` — lista com busca, filtros e indicações de urgência.
-- `src/screens/SubscriptionForm.tsx` — criação/edição de assinaturas; UI de participantes (adicionar/remover/toggle `isMe`).
-- `src/db/index.ts` — shim de persistência (file-backed JSON) e adaptador para web/native.
-- `src/db/subscriptionsDao.ts` — CRUD e helpers para subscriptions (persiste `participants` JSON, funções utilitárias como `removeIconNotesFromAll()`).
-- `src/data/iconMap.ts` — mapeamento de IDs de ícones para assets estáticos em `assets/icons/`.
-- `src/types/subscription.ts` — o modelo `Subscription` e tipos relacionados; `participants` agora inclui `isMe?: boolean`.
-- `src/utils/dateUtils.ts` — funções de data como `daysUntil`.
-- `src/utils/format.ts` — `formatCurrencyBR` e helpers de apresentação.
-
-Dependências principais (extraído de `package.json`)
----------------------------------------------------
-- `expo` (~54.0)
-- `react`, `react-native`, `react-dom`
-- `@expo/vector-icons`
-- `react-native-calendars`
-- `@react-navigation/native`, `@react-navigation/stack`
-- `react-native-gesture-handler`, `react-native-screens`, `react-native-safe-area-context`
-- `@react-native-picker/picker`
-- `expo-file-system`, `expo-sqlite`, `expo-sharing`, `expo-document-picker` (uso diverso em features)
-- `date-fns` (manuseio de datas)
-
-Dependências de desenvolvimento
---------------------------------
-- `typescript`, `jest`, `ts-jest`, `@testing-library/react-native`, `@testing-library/jest-native`.
-
-Funcionalidades implementadas (detalhado)
-----------------------------------------
-- CRUD completo de assinaturas (criar/editar/excluir/visualizar)
-- Dashboard com total mensal normalizado e destaque do próximo vencimento
-- Lista com busca, filtros e indicação de urgência (<=7 dias laranja, <=2 dias vermelho)
-- Formulário com participantes: adicionar/remover, marcar `isMe`, calcular valor por pessoa
-- Calendar picker modal integrado
-- Static iconMap para presets e fallback para ícones vetoriais
-- File-backed DB shim para compatibilidade Expo Web
-- Ajustes de SafeArea e posicionamento de FAB para Android
-
-Decisões e observações técnicas importantes
------------------------------------------
-- O projeto evita `require()` dinâmico para imagens (causa erros no Metro web). Use sempre `src/data/iconMap.ts`.
-- Valores são armazenados em centavos para evitar problemas com floats.
-- `participants` é um array de objetos `{ name: string; isMe?: boolean }` e é persistido como JSON.
-
-Como empacotar / distribuir
----------------------------
-- Para compartilhar o código-fonte, eu gerei um `.zip` raiz: `SubscriptionManager.zip` (local na raiz).
-- Para builds nativos use `expo build` (ou EAS) conforme documentação Expo.
-
-Testes e validação
-------------------
-- Há testes unitários básicos (`__tests__/dateUtils.test.ts`) cobrindo cálculo de datas.
-- Execute:
-
-```powershell
-npm test
+```bash
+cp .env.example .env
+# editar .env com suas credenciais (não commitar)
 ```
 
-Boas práticas ao contribuir
----------------------------
-- Abra uma issue antes de grandes mudanças.
-- Mantenha PRs pequenos e com mensagens claras.
-- Adicione testes quando modificar regras de recorrência ou o DAO.
+3. Iniciar o projeto:
 
-Próximos passos recomendados (alto impacto)
------------------------------------------
-1. Implementar botão "Compartilhar cobrança" na tela de detalhe/Dashboard (gera mensagem com valores por participante e abre o Share sheet).
-2. Adicionar preferência global `Você` em `Settings` para marcar automaticamente o participante nas novas assinaturas.
-3. Adicionar opção admin para rodar `removeIconNotesFromAll()` e limpar notas antigas.
-4. (Opcional) Integrar `expo-notifications` para lembretes locais.
+```bash
+npx expo start
+```
 
-Contato / Auxílio
------------------
-Se quiser que eu implemente alguma das tarefas acima (ex.: botão de compartilhamento), responda "faça" e eu inicio a implementação.
+Arquitetura e decisões técnicas
+------------------------------
+
+- Modularidade por responsabilidades: `screens`, `components`, `db`, `utils`, `data`.
+- Persistência híbrida: shim file-backed JSON (`src/db/index.ts`) para web e adaptadores para armazenamento nativo (SQLite/expo-sqlite) quando aplicável.
+- Normalização: nomes de participante são normalizados (trim + lowercase) para matching consistente.
+- Valores monetários: sempre em centavos (inteiro) para evitar imprecisão de ponto flutuante.
+
+Estrutura de pastas (descrição)
+-----------------------------
+
+`App.tsx`, `index.ts`
+- Ponto de entrada; registra `ThemeProvider`, inicializa DB e executa migrações.
+
+`src/screens/`
+- `Dashboard.tsx`: Visão geral com totais, próximos vencimentos e resumo por participante.
+- `SubscriptionsList.tsx`: Lista de assinaturas, filtros e ações (editar, pagar, excluir).
+- `SubscriptionForm.tsx`: Formulário detalhado com autocomplete de participantes, presets e seleção de ícone.
+- `Participants.tsx`: Gerenciamento de participantes persistidos (editar, excluir, totais por pessoa).
+- `Settings.tsx`: Export/Import, opções e preferências.
+
+`src/db/`
+- `index.ts`: Helpers para read/write JSON e abstração de DB.
+- `participantsDao.ts`: CRUD de participantes persistidos e funções auxiliares (associar subscriptionId, setParticipantAsMe).
+- `subscriptionsDao.ts`: CRUD de assinaturas, cálculo de `next_due`, migrações e agregações por participante.
+
+`src/components/`
+- Componentes reutilizáveis (pickers, pequenos controles, Toasts, etc.).
+
+`src/utils/`
+- `dateUtils.ts`: cálculo de próximas datas de vencimento e utilitários de data.
+- `format.ts`: `formatCurrencyBR` e helpers de apresentação.
+
+`src/data/`
+- `presets.ts`: presets de serviços/plans e metadata para ícones.
+- `iconMap.ts`: mapeamento estático de assets para evitar `require()` dinâmico.
+
+`assets/`
+- Imagens e ícones usados pelo app.
+
+Testes
+------
+
+- Testes mínimos com Jest em `__tests__/`. Execute `npm test`.
+
+Boas práticas
+------------
+
+- Use branches para features; crie PRs para revisão antes de merge em `main`.
+- Rode `npx tsc --noEmit` antes de abrir PRs para garantir tipagem.
+- Não comite `.env` com credenciais.
+
+Contribuição e fluxo sugerido
+----------------------------
+
+- Branch por feature → Pull Request → revisão → merge em `main`.
+- Recomendamos manter PRs pequenos e adicionando testes quando alterar lógica de cálculo.
+
+Licença
+-------
+
+Repositório privado. Não compartilhar sem autorização.
+
+Contato
+-------
+
+- Para dúvidas sobre o projeto, abra uma issue ou contacte os mantenedores listados no repositório.
 
 ---
-_Este README foi atualizado automaticamente para refletir o estado atual do projeto e ajudar a orientar apresentações e contribuições._
+
+_README atualizado para formato e conteúdo solicitado (Subscry)._
