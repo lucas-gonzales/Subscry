@@ -47,27 +47,32 @@ Decisões técnicas (breve)
 Testes
 
 - Testes com Jest em `__tests__/`. Execute `npm test`.
-# Subscry
+# 💰 Subscry - Subscription Tracker MVP
 
-Subscry é um app (Expo + TypeScript) para gerenciar assinaturas recorrentes e dividir custos entre participantes. Este README foi ajustado para refletir fielmente o que a interface atual entrega.
+Controle inteligente de assinaturas recorrentes
 
-Resumo
+Subscry é um aplicativo móvel desenvolvido com Expo + TypeScript para gerenciar assinaturas e dividir custos entre participantes. O projeto é mobile-first e compatível com Web.
 
-- Plataforma: Expo (React Native) + TypeScript
-- Estado: MVP / mobile-first (compatível com Web)
-- Frequências expostas na UI: **Mensal** e **Anual**
+Badges
 
-Funcionalidades principais
+![Expo](https://img.shields.io/badge/Expo-54.0-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue) ![Status](https://img.shields.io/badge/Status-MVP-success)
 
-- CRUD de assinaturas (criar, editar, excluir)
+O que é o Subscry?
+
+Subscry permite registrar assinaturas, calcular próximos vencimentos e dividir valores entre participantes com precisão de centavos. O app foca em simplicidade e uso offline.
+
+Funcionalidades Principais
+
+- CRUD de assinaturas (criar, editar, visualizar e excluir)
 - Dashboard com totais e próximo vencimento
-- Divisão automática de valores entre participantes (cálculo em centavos, determinístico)
-- Persistência de participantes em banco local (autocomplete e agregação de totais)
-- Marcar um participante como "Você" (isMe) a partir do formulário; essa preferência é persistida no banco local
-- Migrações idempotentes para participantes embutidos nas assinaturas
-- Export / Import JSON para backup
+- Cálculo determinístico em centavos para divisão por pessoa
+- Persistência de participantes para autocomplete e agregação de totais
+- Migração idempotente de participantes embutidos em assinaturas
+- Export / Import JSON para backup e restauração
 
-Como rodar (desenvolvimento)
+Observação: a interface atual expõe frequências mensais e anuais; outras frequências não são apresentadas diretamente no formulário.
+
+Como rodar
 
 ```pwsh
 npm install
@@ -75,22 +80,22 @@ npx expo install
 npx expo start
 ```
 
-Arquitetura e arquivos principais
+Arquitetura e decisões técnicas
 
-- `App.tsx`, `index.ts`: inicialização e migrações
-- `src/screens/SubscriptionForm.tsx`: formulário (valor em centavos, participantes, frequência mensal/anual, data de início)
-- `src/screens/SubscriptionsList.tsx`, `src/screens/Dashboard.tsx`: listas e visão geral
-- `src/screens/Participants.tsx`: gerenciamento de participantes persistidos
-- `src/db/index.ts`: abstração de leitura/gravação JSON (expo-file-system)
-- `src/db/participantsDao.ts`: CRUD de participantes e associações (inclui `setParticipantAsMe`)
-- `src/db/subscriptionsDao.ts`: lógica de assinaturas e cálculos de `next_due`
-- `src/utils/dateUtils.ts`: utilitários de data e cálculo de vencimentos
+- Modularidade por responsabilidades: `screens`, `components`, `db`, `utils`, `data`.
+- Persistência file-backed JSON (`src/db/index.ts`) para compatibilidade Web; adaptadores nativos podem ser usados em runtime nativo.
+- Valores monetários são armazenados em centavos (inteiros) para evitar imprecisões.
+- Nomes de participantes são normalizados (trim + lowercase) para matching.
 
-Decisões técnicas (resumo)
+Estrutura de pastas (resumo)
 
-- Valores monetários são armazenados em centavos (inteiros) para evitar imprecisões
-- Nomes de participantes são normalizados (trim + lowercase) para matching
-- Persistência file-backed JSON para compatibilidade Web; adaptadores nativos são usados em runtime nativo
+- `App.tsx`, `index.ts`: ponto de entrada; inicialização e migrações.
+- `src/screens/SubscriptionForm.tsx`: formulário com autocomplete de participantes, presets e seleção de ícone.
+- `src/screens/SubscriptionsList.tsx`, `src/screens/Dashboard.tsx`: listas e visão geral.
+- `src/screens/Participants.tsx`: gerenciamento de participantes persistidos.
+- `src/db/participantsDao.ts`: CRUD de participantes e associações (inclui `setParticipantAsMe`).
+- `src/db/subscriptionsDao.ts`: CRUD de assinaturas, cálculo de `next_due` e agregações.
+- `src/utils/dateUtils.ts`: utilitários de data e cálculo de próximos vencimentos.
 
 Testes
 
@@ -101,11 +106,10 @@ Contribuição
 - Branch por feature → Pull Request → revisão → merge em `main`.
 - Rode `npx tsc --noEmit` antes de abrir PRs.
 
-Validação rápida (como testar `isMe` localmente)
+Contato
 
-1. Abra o app (`npx expo start`) e vá para criar uma assinatura (`SubscriptionForm`).
-2. Adicione participante(s), toque no chip do participante para marcar como “Você” e salve.
-3. Abra a tela `Participants` — o participante marcado deve aparecer com `isMe` ativo.
-4. Em runtime, o arquivo de persistência fica em `expo-file-system` (documentDirectory). O DAO que persiste é `src/db/participantsDao.ts`.
+- Abra uma issue no repositório para reportar bugs ou sugerir melhorias.
 
-Se quiser, eu crio um pequeno teste automatizado ou uma rota debug para listar `participants` durante desenvolvimento.
+---
+
+README restaurado para o layout anterior com remoções solicitadas (menções a múltiplas frequências explícitas e caixas duplicadas removidas).
