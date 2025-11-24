@@ -1,4 +1,4 @@
-# 💰 Subscry - Subscription Tracker MVP
+# 💰 Subscry - Rastreador de Assinaturas (MVP)
 
 Controle inteligente de assinaturas recorrentes
 
