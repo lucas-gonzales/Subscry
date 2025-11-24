@@ -14,12 +14,12 @@ Subscry permite registrar assinaturas, calcular próximos vencimentos e dividir 
 
 Funcionalidades Principais
 
-- CRUD de assinaturas (criar, editar, visualizar e excluir)
-- Dashboard com totais e próximo vencimento
-- Cálculo determinístico em centavos para divisão por pessoa
-- Persistência de participantes para autocomplete e agregação de totais
-- Migração idempotente de participantes embutidos em assinaturas
-- Export / Import JSON para backup e restauração
+- ✅ **CRUD de assinaturas:** criar, editar, visualizar e excluir com facilidade
+- 📊 **Dashboard intuitivo:** totais agregados e visual do próximo vencimento
+- 🧮 **Cálculo preciso (centavos):** divisão determinística por pessoa, sem perda de centavos
+- 👥 **Participantes persistidos:** autocomplete e agregação por pessoa (salva localmente)
+- 🔁 **Migrações idempotentes:** converte participantes embutidos para registros persistidos sem duplicar
+- 💾 **Export / Import (JSON):** backup e restauração simples
 
 Observação: a interface atual expõe frequências mensais e anuais; outras frequências não são apresentadas diretamente no formulário.
 
@@ -63,4 +63,4 @@ Contato
 
 ---
 
-README limpo: removida seção duplicada e mantida a versão desejada.
+<!-- Nota: versão limpa do README. -->
