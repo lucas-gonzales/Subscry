@@ -1,53 +1,4 @@
 # 💰 Subscry - Subscription Tracker MVP
-# Subscry
-
-Subscry é um aplicativo (Expo + TypeScript) para gerenciar assinaturas recorrentes e dividir custos entre participantes. Este README foi reduzido para refletir apenas o que a interface entrega hoje.
-
-Resumo rápido
-
-- Plataforma: Expo (React Native) + TypeScript
-- Estado: MVP / mobile-first (compatível com Web)
-- Frequências expostas na UI: **Mensal** e **Anual**
-
-Funcionalidades importantes
-
-- CRUD de assinaturas (criar, editar, excluir)
-- Dashboard com totais e próximo vencimento
-- Divisão automática de valores entre participantes (cálculo em centavos, determinístico)
-- Persistência de participantes em banco local (autocomplete e agregação de totais)
-- Marcar um participante como "Você" (isMe) e persistir essa preferência
-- Migrações idempotentes para participantes embutidos nas assinaturas
-- Export / Import JSON para backup
-
-Como rodar (desenvolvimento)
-
-```pwsh
-npm install
-npx expo install
-npx expo start
-```
-
-Arquitetura & arquivos principais
-
-- `App.tsx`, `index.ts`: inicialização e migrações
-- `src/screens/SubscriptionForm.tsx`: formulário (valor em centavos, participantes, frequência mensal/anual, data de início)
-- `src/screens/SubscriptionsList.tsx`, `src/screens/Dashboard.tsx`: listas e visão geral
-- `src/screens/Participants.tsx`: gerenciamento de participantes persistidos
-- `src/db/index.ts`: abstração de leitura/gravação JSON
-- `src/db/participantsDao.ts`: CRUD de participantes e associações
-- `src/db/subscriptionsDao.ts`: lógica de assinaturas e cálculos de `next_due`
-- `src/utils/dateUtils.ts`: utilitários de data e cálculo de vencimentos
-
-Decisões técnicas (breve)
-
-- Valores monetários são armazenados em centavos (inteiros) para garantir soma exata
-- Nomes de participantes são normalizados (trim + lowercase) para matching
-- Persistência file-backed JSON para compatibilidade Web; adaptadores nativos são usados em runtime nativo
-
-Testes
-
-- Testes com Jest em `__tests__/`. Execute `npm test`.
-# 💰 Subscry - Subscription Tracker MVP
 
 Controle inteligente de assinaturas recorrentes
 
@@ -112,4 +63,4 @@ Contato
 
 ---
 
-README restaurado para o layout anterior com remoções solicitadas (menções a múltiplas frequências explícitas e caixas duplicadas removidas).
+README limpo: removida seção duplicada e mantida a versão desejada.
